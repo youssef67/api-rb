@@ -7,6 +7,9 @@ export default class AuthController {
   async login({ request, response }: HttpContext) {
     const { email, password } = await request.validateUsing(loginValidator)
 
+    console.log(email)
+    console.log(password)
+
     const user = await User.verifyCredentials(email, password)
     const token = await User.accessTokens.create(user)
 
@@ -17,6 +20,7 @@ export default class AuthController {
   }
 
   async register({ request, response }: HttpContext) {
+    console.log(request.input('email'))
     const payload = await registerValidator.validate({
       email: request.input('email'),
       compagny_name: request.input('compagny_name'),
@@ -38,5 +42,10 @@ export default class AuthController {
     }
     await User.accessTokens.delete(user, token)
     return response.ok({ messages: 'Log out' })
+  }
+
+  async orderValidation({ request, response, auth }: HttpContext) {
+    console.log('toot')
+    const user = auth.getUserOrFail()
   }
 }
