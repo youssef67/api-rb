@@ -23,11 +23,11 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column()
   declare siret_number: string
 
-  @column()
-  declare status: string
-
   @column({ serializeAs: null })
   declare password: string
+
+  @column()
+  declare is_activated: boolean
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

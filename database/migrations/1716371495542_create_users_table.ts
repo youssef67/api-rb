@@ -10,7 +10,7 @@ export default class extends BaseSchema {
       table.string('compagny_name').notNullable()
       table.string('siret_number').notNullable().unique()
       table.string('password').notNullable()
-      table.string('status').defaultTo('pending')
+      table.boolean('is_activated').notNullable().defaultTo(false)
       table.timestamp('created_at')
       table.timestamp('updated_at')
     })

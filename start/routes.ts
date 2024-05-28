@@ -9,25 +9,31 @@
 
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
-const AuthController = () => import('#controllers/auth_controller')
+const AuthController = () => import('#controllers/auth/auth_controller')
+const ActivationController = () => import('#controllers/activation/activations_controller')
+const PasswordResetsController = () =>
+  import('#controllers/password_reset/password_resets_controller')
 
 router
   .group(() => {
-    router.post('register', [AuthController, 'register'])
-    router.post('login', [AuthController, 'login'])
-    router.get('logout', [AuthController, 'logout']).use(middleware.auth())
+    router
+      .group(() => {
+        router
+          .group(() => {
+            router.post('register', [AuthController, 'register'])
+            router.post('login', [AuthController, 'login'])
+            router.post('logout', [AuthController, 'logout']).use(middleware.auth())
+          })
+          .prefix('auth')
 
-    router.get('order-validate', [AuthController, 'orderValidation']).use(middleware.auth())
+        router
+          .group(() => {
+            router.post('activate', [ActivationController, 'activate'])
+            router.post('forgot-password', [PasswordResetsController, 'forgot'])
+            router.post('reset-password', [PasswordResetsController, 'reset'])
+          })
+          .prefix('user')
+      })
+      .prefix('v1')
   })
   .prefix('/api/')
-
-// router
-//   .get('me', async ({ auth, response }) => {
-//     try {
-//       const user = auth.getUserOrFail()
-//       return response.ok(user)
-//     } catch (error) {
-//       return response.unauthorized({ error: 'User not found' })
-//     }
-//   })
-//   .use(middleware.auth())
