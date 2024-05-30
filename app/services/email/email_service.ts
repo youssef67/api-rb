@@ -11,9 +11,9 @@ export default class EmailService {
 
     await mail.send((message) => {
       message
-        .from('info@test.com')
+        .from('contact@rabbit_butcher.com')
         .to(email)
-        .subject('Activate Your Account now')
+        .subject('Activez votre compte')
         .htmlView('emails/verify_email', { email, activationUrl, name })
     })
   }
