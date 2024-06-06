@@ -14,6 +14,9 @@ class AuthService {
 
   async login(email: string, password: string) {
     const user = await User.verifyCredentials(email, password)
+
+    if (!user.is_activated) throw new Error('User is not activated')
+
     const token = await User.accessTokens.create(user, ['*'], {
       expiresIn: env.get('JWT_EXPIRY'),
     })

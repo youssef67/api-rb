@@ -38,6 +38,7 @@ router
         router
           .group(() => {
             router.post('add', [OrdersController, 'add']).use(middleware.auth())
+            router.get('day-orders', [OrdersController, 'getDayOrders']).use(middleware.auth())
           })
           .prefix('order')
       })

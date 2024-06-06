@@ -1,6 +1,7 @@
 export interface CustomerRequest {
+  userId?: number
   name: string
-  surname: string
+  lastname: string
   email: string
   phone: string
 }

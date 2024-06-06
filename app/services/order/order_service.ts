@@ -1,25 +1,22 @@
 import Order from '#models/order'
-import Customer from '#models/customer'
-import type { OrderRequest } from '#controllers/interfaces/order.interface'
 import { DateTime } from 'luxon'
 import EmailOrder from '#services/email/email_order'
+import Customer from '#models/customer'
 
 class OrderService {
-  async add(payload: OrderRequest) {
-    const { amount, pickupDate, ...columnsCustomer } = payload
-    const customer = await Customer.firstOrNew(columnsCustomer)
-    customer.save()
-
-    const pickupDateToDateTime = DateTime.fromFormat(pickupDate, 'dd/MM/yyyy')
-
-    if (!pickupDateToDateTime.isValid) {
-      throw new Error('Invalid pickup date')
-    }
+  async add(
+    amount: number,
+    pickupDate: string,
+    customer: Customer,
+    userId: number
+  ): Promise<Order> {
+    const pickupDateFormat = DateTime.fromFormat(pickupDate, 'dd/MM/yyyy', { locale: 'fr' })
 
     const order = await Order.create({
       orderPrice: amount,
-      pickupDate: pickupDateToDateTime.toSQLDate(),
+      pickupDate: pickupDateFormat.isValid ? pickupDateFormat.toSQLDate() : null,
       customerId: customer.id,
+      userId: userId,
     })
     await order.save()
 

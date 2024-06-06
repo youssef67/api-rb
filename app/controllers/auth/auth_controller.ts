@@ -17,6 +17,7 @@ export default class AuthController {
     }
   }
 
+  //jodevog698@fresec.com
   async login({ request, response }: HttpContext): Promise<void> {
     try {
       const { email, password } = await request.validateUsing(loginValidator)
