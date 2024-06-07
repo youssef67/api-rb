@@ -24,6 +24,21 @@ class OrderService {
 
     return order
   }
+
+  async getDayOrders(userId: number): Promise<Order[]> {
+    const orders = await Order.query().where('user_id', '=', userId).preload('customer')
+
+    orders.forEach((order) => {
+      console.log('Order id:', order.orderPrice)
+      console.log('Order pickupDate:', order.pickupDate)
+      console.log('Order user id:', order.userId)
+
+      const customer = order.customer
+      console.log('customer email', customer.email)
+    })
+
+    return orders
+  }
 }
 
 export default new OrderService()

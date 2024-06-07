@@ -21,6 +21,8 @@ export default class OrdersController {
   }
 
   async getDayOrders({ request, response, params }: HttpContext) {
-    // const orders = await OrderService.getDayOrders(request.qs().userId)
+    const orders = await OrderService.getDayOrders(request.qs().userId)
+
+    return orders.length > 0 ? response.status(200).json(orders) : response.status(204)
   }
 }
