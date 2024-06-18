@@ -8,6 +8,8 @@ export interface OrderRequest {
   phone: string
   amount: number
   pickupDate: string
+  detailsForCustomer: string
+  detailsForUser: string
 }
 
 export interface OrderServiceRequest {
@@ -18,4 +20,6 @@ export interface OrderServiceRequest {
   phone: string
   amount: number
   pickupDate: DateTime
+  detailsForCustomer: string
+  detailsForUser: string
 }

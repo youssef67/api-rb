@@ -4,18 +4,18 @@ import { CustomerRequest } from '#controllers/interfaces/customer.interface'
 
 class CustomerService {
   async checkIfCustomerExists(payload: CustomerRequest) {
-    const { userId, ...columnsCustomer } = payload
+    const { userId, ...rest } = payload
 
     const user = await User.findOrFail(userId)
 
-    let customer = await Customer.findBy('email', columnsCustomer.email)
+    let customer = await Customer.findBy('email', rest.email)
 
     if (!customer) {
       customer = new Customer()
-      customer.email = columnsCustomer.email
-      customer.phone = columnsCustomer.phone
-      customer.name = columnsCustomer.name
-      customer.lastname = columnsCustomer.lastname
+      customer.email = rest.email
+      customer.phone = rest.phone
+      customer.name = rest.name
+      customer.lastname = rest.lastname
       await customer.save()
     }
 

@@ -2,14 +2,23 @@ import Order from '#models/order'
 import { DateTime } from 'luxon'
 import EmailOrder from '#services/email/email_order'
 import Customer from '#models/customer'
-import State from '#models/state'
+
+interface ColumnsCustomer {
+  userId: number
+  name: string
+  lastname: string
+  email: string
+  phone: string
+  detailsForCustomer: string
+  detailsForUser: string
+}
 
 class OrderService {
   async add(
     amount: number,
     pickupDate: string,
     customer: Customer,
-    userId: number
+    rest: ColumnsCustomer
   ): Promise<Order> {
     const pickupDateFormat = DateTime.fromFormat(pickupDate, 'dd/MM/yyyy', { locale: 'fr' })
 
@@ -18,11 +27,13 @@ class OrderService {
       pickupDate: pickupDateFormat.isValid ? pickupDateFormat.toSQLDate() : null,
       stateId: 2,
       customerId: customer.id,
-      userId: userId,
+      userId: rest.userId,
+      detailsForCustomer: rest.detailsForCustomer,
+      detailsForUser: rest.detailsForUser,
     })
     await order.save()
 
-    await EmailOrder.sendEmailForOrder(customer.email, amount, pickupDate)
+    await EmailOrder.sendEmailForOrder(customer.email, amount, pickupDate, rest.detailsForCustomer)
 
     return order
   }

@@ -15,6 +15,12 @@ export default class Order extends BaseModel {
   @column()
   declare pickupDate: DateTime
 
+  @column()
+  declare detailsForCustomer: String
+
+  @column()
+  declare detailsForUser: String
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 

@@ -8,11 +8,15 @@ export default class OrdersController {
   async add({ request, response }: HttpContext) {
     try {
       const payload: OrderRequest = await request.validateUsing(addOrderValidator)
-      const { amount, pickupDate, ...columnsCustomer } = payload
+      const { amount, pickupDate, ...rest } = payload
 
-      const customer = await CustomerService.checkIfCustomerExists(columnsCustomer)
+      console.log(rest)
 
-      const order = await OrderService.add(amount, pickupDate, customer, columnsCustomer.userId)
+      const customer = await CustomerService.checkIfCustomerExists(rest)
+
+      console.log(customer)
+
+      const order = await OrderService.add(amount, pickupDate, customer, rest)
 
       return response.status(201).json(order)
     } catch (error) {

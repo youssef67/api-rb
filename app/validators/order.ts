@@ -9,6 +9,8 @@ export const addOrderValidator = vine.compile(
     phone: vine.string().minLength(10).maxLength(15),
     amount: vine.number().min(1),
     pickupDate: vine.string(),
+    detailsForCustomer: vine.string().minLength(2).maxLength(600),
+    detailsForUser: vine.string().minLength(2).maxLength(600),
   })
 )
 
