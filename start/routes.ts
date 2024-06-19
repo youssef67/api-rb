@@ -38,6 +38,7 @@ router
         router
           .group(() => {
             router.post('add', [OrdersController, 'add'])
+            router.post('update', [OrdersController, 'update'])
             router.post('recovered', [OrdersController, 'recoveredOrder'])
             router.post('canceled', [OrdersController, 'canceledOrder'])
             router.get('day-orders', [OrdersController, 'getDayOrders'])

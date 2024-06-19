@@ -1,17 +1,9 @@
 import Order from '#models/order'
 import { DateTime } from 'luxon'
 import EmailOrder from '#services/email/email_order'
-import Customer from '#models/customer'
+import type { ColumnsCustomer, UpdateRequest } from '#controllers/interfaces/order.interface'
 
-interface ColumnsCustomer {
-  userId: number
-  name: string
-  lastname: string
-  email: string
-  phone: string
-  detailsForCustomer: string
-  detailsForUser: string
-}
+import Customer from '#models/customer'
 
 class OrderService {
   async add(
@@ -28,12 +20,27 @@ class OrderService {
       stateId: 2,
       customerId: customer.id,
       userId: rest.userId,
-      detailsForCustomer: rest.detailsForCustomer,
-      detailsForUser: rest.detailsForUser,
+      detailsForCustomer: rest.detailsForCustomer ?? '',
+      detailsForUser: rest.detailsForUser ?? '',
     })
     await order.save()
 
     await EmailOrder.sendEmailForOrder(customer.email, amount, pickupDate, rest.detailsForCustomer)
+
+    return order
+  }
+
+  async update(payload: UpdateRequest) {
+    const order = await Order.findOrFail(payload.orderId)
+
+    const pickupDateFormat = DateTime.fromFormat(payload.pickupDate, 'dd/MM/yyyy', { locale: 'fr' })
+
+    order.orderPrice = payload.amount
+    order.pickupDate = pickupDateFormat.isValid ? pickupDateFormat.toSQLDate() : null
+    order.detailsForCustomer = payload.detailsForCustomer ?? ''
+    order.detailsForUser = payload.detailsForUser ?? ''
+
+    await order.save()
 
     return order
   }

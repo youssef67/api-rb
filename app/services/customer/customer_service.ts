@@ -29,6 +29,8 @@ class CustomerService {
 
     return customer
   }
+
+  async updateCustomer() {}
 }
 
 export default new CustomerService()
