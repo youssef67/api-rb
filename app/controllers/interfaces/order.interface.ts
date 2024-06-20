@@ -8,6 +8,7 @@ export interface OrderRequest {
   phone: string
   amount: number
   pickupDate: string
+  pickupTime: string
   detailsForCustomer: string
   detailsForUser: string
 }
@@ -16,6 +17,7 @@ export interface UpdateRequest {
   orderId: number
   amount: number
   pickupDate: string
+  pickupTime: string
   detailsForCustomer: string | null
   detailsForUser: string | null
 }

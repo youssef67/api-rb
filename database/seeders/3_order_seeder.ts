@@ -14,6 +14,7 @@ export default class extends BaseSeeder {
         pickupDate: this.convertDate('19/06/2024').isValid
           ? this.convertDate('19/06/2024').toSQLDate()
           : null,
+        pickupTime: '17:30:00',
         detailsForCustomer: 'Details for customer 1',
       },
       {
@@ -24,6 +25,8 @@ export default class extends BaseSeeder {
         pickupDate: this.convertDate('10/10/2024').isValid
           ? this.convertDate('10/10/2024').toSQLDate()
           : null,
+        pickupTime: '15:00:00',
+
         detailsForUser: 'Details for user 2',
       },
       {
@@ -34,6 +37,7 @@ export default class extends BaseSeeder {
         pickupDate: this.convertDate('08/10/2024').isValid
           ? this.convertDate('08/10/2024').toSQLDate()
           : null,
+        pickupTime: '19:00:00',
         detailsForUser: 'Details for user 3',
       },
       {
@@ -44,6 +48,7 @@ export default class extends BaseSeeder {
         pickupDate: this.convertDate('09/08/2024').isValid
           ? this.convertDate('09/08/2024').toSQLDate()
           : null,
+        pickupTime: '20:30:00',
         detailsForCustomer: 'Details for customer 4',
         detailsForUser: 'Details for user 4',
       },
@@ -52,6 +57,7 @@ export default class extends BaseSeeder {
         customerId: 4,
         orderPrice: 5,
         stateId: 1,
+        pickupTime: '21:00:00',
         pickupDate: this.convertDate('10/10/2024').isValid
           ? this.convertDate('10/10/2024').toSQLDate()
           : null,
@@ -66,6 +72,7 @@ export default class extends BaseSeeder {
         pickupDate: this.convertDate('09/08/2024').isValid
           ? this.convertDate('09/08/2024').toSQLDate()
           : null,
+        pickupTime: '16:30:00',
         detailsForCustomer: 'Details for customer 6',
         detailsForUser: 'Details for user 6',
       },
@@ -77,6 +84,7 @@ export default class extends BaseSeeder {
         pickupDate: this.convertDate('09/08/2024').isValid
           ? this.convertDate('09/08/2024').toSQLDate()
           : null,
+        pickupTime: '17:00:00',
         detailsForCustomer: 'Details for customer 7',
         detailsForUser: 'Details for user 7',
       },
@@ -88,6 +96,7 @@ export default class extends BaseSeeder {
         pickupDate: this.convertDate('09/08/2024').isValid
           ? this.convertDate('09/08/2024').toSQLDate()
           : null,
+        pickupTime: '17:30:00',
         detailsForCustomer: 'Details for customer 8',
         detailsForUser: 'Details for user 8',
       },
@@ -99,6 +108,7 @@ export default class extends BaseSeeder {
         pickupDate: this.convertDate('09/08/2024').isValid
           ? this.convertDate('09/08/2024').toSQLDate()
           : null,
+        pickupTime: '18:30:00',
         detailsForCustomer: 'Details for customer 9',
         detailsForUser: 'Details for user 9',
       },
@@ -110,6 +120,7 @@ export default class extends BaseSeeder {
         pickupDate: this.convertDate('09/08/2024').isValid
           ? this.convertDate('09/08/2024').toSQLDate()
           : null,
+        pickupTime: '18:00:00',
         detailsForCustomer: 'Details for customer 10',
       },
       {
@@ -120,6 +131,7 @@ export default class extends BaseSeeder {
         pickupDate: this.convertDate('09/08/2024').isValid
           ? this.convertDate('09/08/2024').toSQLDate()
           : null,
+        pickupTime: '18:00:00',
         detailsForUser: 'Details for user 11',
       },
       {
@@ -130,6 +142,7 @@ export default class extends BaseSeeder {
         pickupDate: this.convertDate('09/08/2024').isValid
           ? this.convertDate('09/08/2024').toSQLDate()
           : null,
+        pickupTime: '11:30:00',
       },
       {
         userId: 1,
@@ -139,6 +152,7 @@ export default class extends BaseSeeder {
         pickupDate: this.convertDate('09/08/2024').isValid
           ? this.convertDate('09/08/2024').toSQLDate()
           : null,
+        pickupTime: '11:00:00',
       },
       {
         userId: 1,
@@ -148,6 +162,8 @@ export default class extends BaseSeeder {
         pickupDate: this.convertDate('09/08/2024').isValid
           ? this.convertDate('09/08/2024').toSQLDate()
           : null,
+        pickupTime: '10:00:00',
+
         detailsForCustomer: 'Details for customer 12',
         detailsForUser: 'Details for user 12',
       },
@@ -156,6 +172,7 @@ export default class extends BaseSeeder {
         customerId: 4,
         orderPrice: 15,
         stateId: 1,
+        pickupTime: '12:00:00',
         pickupDate: this.convertDate('09/08/2024').isValid
           ? this.convertDate('09/08/2024').toSQLDate()
           : null,
@@ -168,6 +185,7 @@ export default class extends BaseSeeder {
         pickupDate: this.convertDate('09/08/2024').isValid
           ? this.convertDate('09/08/2024').toSQLDate()
           : null,
+        pickupTime: '19:00:00',
       },
       {
         userId: 1,
@@ -177,6 +195,7 @@ export default class extends BaseSeeder {
         pickupDate: this.convertDate('09/08/2024').isValid
           ? this.convertDate('09/08/2024').toSQLDate()
           : null,
+        pickupTime: '15:30:00',
         detailsForUser: 'Details for user 13',
       },
       //------- User 2 -------
@@ -188,6 +207,7 @@ export default class extends BaseSeeder {
         pickupDate: this.convertDate('01/09/2024').isValid
           ? this.convertDate('01/09/2024').toSQLDate()
           : null,
+        pickupTime: '17:30:00',
       },
       {
         userId: 2,
@@ -197,6 +217,7 @@ export default class extends BaseSeeder {
         pickupDate: this.convertDate('01/09/2024').isValid
           ? this.convertDate('01/09/2024').toSQLDate()
           : null,
+        pickupTime: '18:00:00',
       },
       {
         userId: 2,
@@ -206,6 +227,7 @@ export default class extends BaseSeeder {
         pickupDate: this.convertDate('20/08/2024').isValid
           ? this.convertDate('20/08/2024').toSQLDate()
           : null,
+        pickupTime: '19:00:00',
       },
       {
         userId: 2,
@@ -215,6 +237,7 @@ export default class extends BaseSeeder {
         pickupDate: this.convertDate('15/08/2024').isValid
           ? this.convertDate('15/08/2024').toSQLDate()
           : null,
+        pickupTime: '17:30:00',
       },
       {
         userId: 2,
@@ -224,6 +247,7 @@ export default class extends BaseSeeder {
         pickupDate: this.convertDate('14/06/2024').isValid
           ? this.convertDate('16/06/2024').toSQLDate()
           : null,
+        pickupTime: '18:30:00',
       },
     ])
   }

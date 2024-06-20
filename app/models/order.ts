@@ -12,8 +12,11 @@ export default class Order extends BaseModel {
   @column()
   declare orderPrice: number
 
-  @column()
+  @column.dateTime()
   declare pickupDate: DateTime
+
+  @column()
+  declare pickupTime: string
 
   @column()
   declare detailsForCustomer: String

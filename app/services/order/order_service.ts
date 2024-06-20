@@ -9,34 +9,48 @@ class OrderService {
   async add(
     amount: number,
     pickupDate: string,
+    pickupTime: string,
     customer: Customer,
     rest: ColumnsCustomer
-  ): Promise<Order> {
-    const pickupDateFormat = DateTime.fromFormat(pickupDate, 'dd/MM/yyyy', { locale: 'fr' })
+  ) {
+    const date = DateTime.fromISO(pickupDate, { zone: 'Europe/Paris', locale: 'fr' })
+    const time = DateTime.fromISO(pickupTime, { zone: 'Europe/Paris', locale: 'fr' })
+
+    const timeForSQL = `${time.hour}:${time.minute === 0 ? '00' : time.minute}:00`
+
+    const pickupDateSQL = date.toSQL({ includeOffset: false })
 
     const order = await Order.create({
       orderPrice: amount,
-      pickupDate: pickupDateFormat.isValid ? pickupDateFormat.toSQLDate() : null,
+      pickupDate: pickupDateSQL,
+      pickupTime: timeForSQL,
       stateId: 2,
       customerId: customer.id,
       userId: rest.userId,
       detailsForCustomer: rest.detailsForCustomer ?? '',
       detailsForUser: rest.detailsForUser ?? '',
     })
+
     await order.save()
-
     await EmailOrder.sendEmailForOrder(customer.email, amount, pickupDate, rest.detailsForCustomer)
-
     return order
   }
 
   async update(payload: UpdateRequest) {
     const order = await Order.findOrFail(payload.orderId)
 
-    const pickupDateFormat = DateTime.fromFormat(payload.pickupDate, 'dd/MM/yyyy', { locale: 'fr' })
+    // const pickupDateFormat = DateTime.fromFormat(payload.pickupDate, 'dd/MM/yyyy', { locale: 'fr' })
+    const date = DateTime.fromISO(payload.pickupDate, { zone: 'Europe/Paris', locale: 'fr' })
+    const time = DateTime.fromISO(payload.pickupTime, { zone: 'Europe/Paris', locale: 'fr' })
 
+    const pickupDateSQL = date.toSQL({ includeOffset: false })
+    const timeForSQL = `${time.hour}:${time.minute === 0 ? '00' : time.minute}:00`
+
+    console.log(date)
+    console.log(time)
     order.orderPrice = payload.amount
-    order.pickupDate = pickupDateFormat.isValid ? pickupDateFormat.toSQLDate() : null
+    order.pickupDate = pickupDateSQL
+    order.pickupTime = timeForSQL
     order.detailsForCustomer = payload.detailsForCustomer ?? ''
     order.detailsForUser = payload.detailsForUser ?? ''
 

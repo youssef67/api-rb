@@ -2,17 +2,19 @@ import type { HttpContext } from '@adonisjs/core/http'
 import type { OrderRequest, UpdateRequest } from '#controllers/interfaces/order.interface'
 import { addOrderValidator, OrderIdValidator, updateOrderValidator } from '#validators/order'
 import OrderService from '#services/order/order_service'
+
 import CustomerService from '#services/customer/customer_service'
 
 export default class OrdersController {
   async add({ request, response }: HttpContext) {
     try {
       const payload: OrderRequest = await request.validateUsing(addOrderValidator)
-      const { amount, pickupDate, ...rest } = payload
+
+      const { amount, pickupDate, pickupTime, ...rest } = payload
 
       const customer = await CustomerService.checkIfCustomerExists(rest)
 
-      const order = await OrderService.add(amount, pickupDate, customer, rest)
+      const order = await OrderService.add(amount, pickupDate, pickupTime, customer, rest)
 
       return response.status(201).json(order)
     } catch (error) {
@@ -21,15 +23,16 @@ export default class OrdersController {
   }
 
   async update({ request, response }: HttpContext) {
-    try {
-      const payload: UpdateRequest = await request.validateUsing(updateOrderValidator)
+    // try {
+    const payload: UpdateRequest = await request.validateUsing(updateOrderValidator)
 
-      const order = await OrderService.update(payload)
-      // console.log(payload)
-      return response.status(201).json(order)
-    } catch (error) {
-      return response.badRequest({ message: 'Cannot update order' })
-    }
+    console.log(payload)
+    const order = await OrderService.update(payload)
+    //   // console.log(payload)
+    //   return response.status(201).json(order)
+    // } catch (error) {
+    //   return response.badRequest({ message: 'Cannot update order' })
+    //}
   }
 
   async recoveredOrder({ request, response }: HttpContext) {
