@@ -13,7 +13,6 @@ export default class OrdersController {
       const { amount, pickupDate, pickupTime, ...rest } = payload
 
       const customer = await CustomerService.checkIfCustomerExists(rest)
-
       const order = await OrderService.add(amount, pickupDate, pickupTime, customer, rest)
 
       return response.status(201).json(order)
@@ -23,16 +22,14 @@ export default class OrdersController {
   }
 
   async update({ request, response }: HttpContext) {
-    // try {
-    const payload: UpdateRequest = await request.validateUsing(updateOrderValidator)
+    try {
+      const payload: UpdateRequest = await request.validateUsing(updateOrderValidator)
 
-    console.log(payload)
-    const order = await OrderService.update(payload)
-    //   // console.log(payload)
-    //   return response.status(201).json(order)
-    // } catch (error) {
-    //   return response.badRequest({ message: 'Cannot update order' })
-    //}
+      const order = await OrderService.update(payload)
+      return response.status(201).json(order)
+    } catch (error) {
+      return response.badRequest({ message: 'Cannot update order' })
+    }
   }
 
   async recoveredOrder({ request, response }: HttpContext) {

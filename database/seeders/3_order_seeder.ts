@@ -11,8 +11,8 @@ export default class extends BaseSeeder {
         customerId: 1,
         orderPrice: 1,
         stateId: 1,
-        pickupDate: this.convertDate('19/06/2024').isValid
-          ? this.convertDate('19/06/2024').toSQLDate()
+        pickupDate: this.convertDate('20/06/2024').isValid
+          ? this.convertDate('20/06/2024').toSQLDate()
           : null,
         pickupTime: '17:30:00',
         detailsForCustomer: 'Details for customer 1',
@@ -22,8 +22,8 @@ export default class extends BaseSeeder {
         customerId: 4,
         orderPrice: 2,
         stateId: 2,
-        pickupDate: this.convertDate('10/10/2024').isValid
-          ? this.convertDate('10/10/2024').toSQLDate()
+        pickupDate: this.convertDate('20/06/2024').isValid
+          ? this.convertDate('20/06/2024').toSQLDate()
           : null,
         pickupTime: '15:00:00',
 
@@ -34,8 +34,8 @@ export default class extends BaseSeeder {
         customerId: 1,
         orderPrice: 3,
         stateId: 1,
-        pickupDate: this.convertDate('08/10/2024').isValid
-          ? this.convertDate('08/10/2024').toSQLDate()
+        pickupDate: this.convertDate('20/06/2024').isValid
+          ? this.convertDate('20/06/2024').toSQLDate()
           : null,
         pickupTime: '19:00:00',
         detailsForUser: 'Details for user 3',
@@ -45,8 +45,8 @@ export default class extends BaseSeeder {
         customerId: 3,
         orderPrice: 4,
         stateId: 2,
-        pickupDate: this.convertDate('09/08/2024').isValid
-          ? this.convertDate('09/08/2024').toSQLDate()
+        pickupDate: this.convertDate('20/06/2024').isValid
+          ? this.convertDate('20/06/2024').toSQLDate()
           : null,
         pickupTime: '20:30:00',
         detailsForCustomer: 'Details for customer 4',
@@ -58,8 +58,8 @@ export default class extends BaseSeeder {
         orderPrice: 5,
         stateId: 1,
         pickupTime: '21:00:00',
-        pickupDate: this.convertDate('10/10/2024').isValid
-          ? this.convertDate('10/10/2024').toSQLDate()
+        pickupDate: this.convertDate('20/06/2024').isValid
+          ? this.convertDate('20/06/2024').toSQLDate()
           : null,
         detailsForCustomer: 'Details for customer 5',
         detailsForUser: 'Details for user 5',
