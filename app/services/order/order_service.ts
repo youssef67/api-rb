@@ -77,7 +77,6 @@ class OrderService {
 
   async getDayOrders(userId: number): Promise<Order[]> {
     const today = DateTime.now().toISODate()
-    console.log(today)
 
     const orders = await Order.query()
       .where('user_id', '=', userId)
@@ -85,7 +84,14 @@ class OrderService {
       .whereRaw('DATE(pickup_date) = ?', [today])
       .preload('customer')
 
-    console.log(orders.length)
+    return orders
+  }
+
+  async getAllOrders(userId: number): Promise<Order[]> {
+    const orders = await Order.query()
+      .where('user_id', '=', userId)
+      .whereNotIn('state_id', [3, 4])
+      .preload('customer')
 
     return orders
   }

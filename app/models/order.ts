@@ -1,9 +1,9 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, belongsTo, hasMany } from '@adonisjs/lucid/orm'
+import { BaseModel, column, belongsTo } from '@adonisjs/lucid/orm'
 import Customer from './customer.js'
 import State from './state.js'
 import User from './user.js'
-import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
+import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 
 export default class Order extends BaseModel {
   @column({ isPrimary: true })
@@ -24,11 +24,8 @@ export default class Order extends BaseModel {
   @column()
   declare detailsForUser: String
 
-  @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime
-
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
-  declare updatedAt: DateTime
+  @column()
+  declare stateId: number
 
   @column()
   declare customerId: number
@@ -36,8 +33,11 @@ export default class Order extends BaseModel {
   @column()
   declare userId: number
 
-  @column()
-  declare stateId: number
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
 
   @belongsTo(() => State)
   declare status: BelongsTo<typeof State>

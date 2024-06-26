@@ -13,6 +13,9 @@ export default class OrdersController {
       const { amount, pickupDate, pickupTime, ...rest } = payload
 
       const customer = await CustomerService.checkIfCustomerExists(rest)
+
+      console.log(customer)
+
       const order = await OrderService.add(amount, pickupDate, pickupTime, customer, rest)
 
       return response.status(201).json(order)
@@ -50,6 +53,12 @@ export default class OrdersController {
 
   async getDayOrders({ request, response }: HttpContext) {
     const orders = await OrderService.getDayOrders(request.qs().userId)
+
+    return response.status(200).json(orders)
+  }
+
+  async getAllOrders({ request, response }: HttpContext) {
+    const orders = await OrderService.getAllOrders(request.qs().userId)
 
     return response.status(200).json(orders)
   }

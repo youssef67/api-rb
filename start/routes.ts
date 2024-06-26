@@ -42,9 +42,17 @@ router
             router.post('recovered', [OrdersController, 'recoveredOrder'])
             router.post('canceled', [OrdersController, 'canceledOrder'])
             router.get('day-orders', [OrdersController, 'getDayOrders'])
+            router.get('all-orders', [OrdersController, 'getAllOrders'])
           })
           .use(middleware.auth())
           .prefix('order')
+
+        router
+          .group(() => {
+            router.get('all-customers', [OrdersController, 'getAllOrders'])
+          })
+          .use(middleware.auth())
+          .prefix('customer')
       })
       .prefix('v1')
   })
