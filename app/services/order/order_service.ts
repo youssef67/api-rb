@@ -46,8 +46,6 @@ class OrderService {
     const pickupDateSQL = date.toSQL({ includeOffset: false })
     const timeForSQL = `${time.hour}:${time.minute === 0 ? '00' : time.minute}:00`
 
-    console.log(date)
-    console.log(time)
     order.orderPrice = payload.amount
     order.pickupDate = pickupDateSQL
     order.pickupTime = timeForSQL

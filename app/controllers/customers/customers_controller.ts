@@ -4,8 +4,12 @@ import CustomerService from '#services/customer/customer_service'
 
 export default class CustomersController {
   async getAllCustomers({ request, response }: HttpContext) {
-    const orders = await CustomerService.getAllCustomers(request.qs().userId)
+    const customers = await CustomerService.getAllCustomers(request.qs().userId)
 
-    return response.status(200).json(orders)
+    // customers.forEach((customer) => {
+    //   console.log(customer.lastOrderDate)
+    // })
+
+    return response.status(200).json(customers)
   }
 }

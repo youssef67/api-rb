@@ -7,7 +7,7 @@ export const CustomerFactory = factory
     return {
       name: faker.person.firstName(),
       lastname: faker.person.lastName(),
-      phone: faker.helpers.fromRegExp(/^0[1-9] (\d{2} ){4}$/),
+      phone: faker.helpers.fromRegExp(/06[0-9]{8}/),
       email: `you.moudni+customer-${faker.internet.userName()}@gmail.com`,
     }
   })

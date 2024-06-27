@@ -14,6 +14,7 @@ const ActivationController = () => import('#controllers/activation/activations_c
 const PasswordResetsController = () =>
   import('#controllers/password_reset/password_resets_controller')
 const OrdersController = () => import('#controllers/orders/orders_controller')
+const CustomersController = () => import('#controllers/customers/customers_controller')
 
 router
   .group(() => {
@@ -49,7 +50,7 @@ router
 
         router
           .group(() => {
-            router.get('all-customers', [OrdersController, 'getAllOrders'])
+            router.get('all-customers', [CustomersController, 'getAllCustomers'])
           })
           .use(middleware.auth())
           .prefix('customer')

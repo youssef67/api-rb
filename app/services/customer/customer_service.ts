@@ -1,6 +1,7 @@
 import Customer from '#models/customer'
 import User from '#models/user'
-import { CustomerRequest } from '#controllers/interfaces/customer.interface'
+import { CustomerRequest, ResponseAllCustomers } from '#controllers/interfaces/customer.interface'
+import { DateTime } from 'luxon'
 
 class CustomerService {
   async checkIfCustomerExists(payload: CustomerRequest) {
@@ -38,10 +39,32 @@ class CustomerService {
 
   async updateCustomer() {}
 
-  async getAllCustomers(userId: number): Promise<Customer[]> {
-    const customers = await Customer.query().where('user_id', '=', userId)
+  async getAllCustomers(userId: number): Promise<ResponseAllCustomers[]> {
+    const user = await User.findOrFail(userId)
+    const customers = await user.related('customers').query().withCount('orders')
 
-    return customers
+    let result: ResponseAllCustomers[] = []
+
+    for (const customer of customers) {
+      const orders = await customer.related('orders').query()
+
+      let totalOrderAmount = 0
+      orders.forEach((order) => {
+        totalOrderAmount += Number(order.orderPrice)
+      })
+
+      const customerData: ResponseAllCustomers = {
+        customer: customer,
+        ordersCount: customer.$extras.orders_count,
+        lastOrderDate: DateTime.fromISO(orders[orders.length - 1].pickupDate.toString())
+          .setLocale('fr')
+          .toFormat('dd LLLL yyyy'),
+        totalOrderAmount: totalOrderAmount.toFixed(2),
+      }
+
+      result.push(customerData)
+    }
+    return result
   }
 }
 
