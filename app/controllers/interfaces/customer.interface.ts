@@ -24,3 +24,11 @@ export interface ResponseAllCustomers {
   lastOrderDate: string
   totalOrderAmount: string
 }
+
+export interface UpdateRequest {
+  customerId: number
+  name: string
+  lastname: string
+  phone: string
+  email: string
+}

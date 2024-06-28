@@ -1,6 +1,10 @@
 import Customer from '#models/customer'
 import User from '#models/user'
-import { CustomerRequest, ResponseAllCustomers } from '#controllers/interfaces/customer.interface'
+import {
+  CustomerRequest,
+  ResponseAllCustomers,
+  UpdateRequest,
+} from '#controllers/interfaces/customer.interface'
 import { DateTime } from 'luxon'
 
 class CustomerService {
@@ -37,7 +41,18 @@ class CustomerService {
     }
   }
 
-  async updateCustomer() {}
+  async update(payload: UpdateRequest) {
+    const customer = await Customer.findOrFail(payload.customerId)
+
+    customer.name = payload.name
+    customer.lastname = payload.lastname
+    customer.email = payload.email
+    customer.phone = payload.phone
+
+    await customer.save()
+
+    return customer
+  }
 
   async getAllCustomers(userId: number): Promise<ResponseAllCustomers[]> {
     const user = await User.findOrFail(userId)
