@@ -20,7 +20,6 @@ export default class CustomersController {
 
       const customer = await CustomerService.update(payload)
 
-      console.log(customer)
       return response.status(201).json(customer)
     } catch (error) {
       return response.badRequest({ message: 'Cannot update customer' })

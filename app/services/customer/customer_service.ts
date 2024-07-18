@@ -6,6 +6,7 @@ import {
   UpdateRequest,
 } from '#controllers/interfaces/customer.interface'
 import { DateTime } from 'luxon'
+import States from '../../enums/states.js'
 
 class CustomerService {
   async checkIfCustomerExists(payload: CustomerRequest) {
@@ -62,9 +63,22 @@ class CustomerService {
       const orders = await customer.related('orders').query()
 
       let totalOrderAmount = 0
+      let nbOfNoShowOrder = 0
       orders.forEach((order) => {
+        if (order.$original.stateId === States.NOSWHOW) {
+          nbOfNoShowOrder += 1
+        }
+
         totalOrderAmount += Number(order.orderPrice)
       })
+
+      const ratio = Number.parseInt(((nbOfNoShowOrder * 100) / orders.length).toFixed(0))
+
+      const notation = () => {
+        if (ratio === 0) return 1
+        else if (ratio > 0 && ratio <= 10) return 2
+        else return 3
+      }
 
       const customerData: ResponseAllCustomers = {
         customer: customer,
@@ -73,6 +87,8 @@ class CustomerService {
           .setLocale('fr')
           .toFormat('dd LLLL yyyy'),
         totalOrderAmount: totalOrderAmount.toFixed(2),
+        nbOfNoShowOrder: nbOfNoShowOrder,
+        notation: notation(),
       }
 
       result.push(customerData)

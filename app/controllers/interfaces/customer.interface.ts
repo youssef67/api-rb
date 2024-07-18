@@ -23,6 +23,8 @@ export interface ResponseAllCustomers {
   ordersCount: number
   lastOrderDate: string
   totalOrderAmount: string
+  nbOfNoShowOrder: number
+  notation: number
 }
 
 export interface UpdateRequest {

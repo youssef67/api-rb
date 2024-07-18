@@ -72,9 +72,9 @@ export default class extends BaseSeeder {
 
     // define the weighted choices for the stateId field for the futur orders
     const weightedChoicesPastOrder: WeightedChoice<States>[] = [
-      [States.RECOVERED, 0.7], // 30% de probability
+      [States.RECOVERED, 0.75], // 30% de probability
       [States.CANCELLED, 0.15], // 15% de probability
-      [States.NOSWHOW, 0.15], // 5% de probability
+      [States.NOSWHOW, 0.1], // 5% de probability
       [States.CONFIRMED, 0.0], // 0% de probability
       [States.PENDING, 0.0], // 0% de probability
     ]
@@ -86,7 +86,7 @@ export default class extends BaseSeeder {
       for (let index = 0; index < numberOfOrders; index++) {
         await OrderFactory.merge({
           pickupDate: DateTime.fromJSDate(
-            faker.date.between({ from: '2024-07-17', to: '2024-07-31' })
+            faker.date.between({ from: '2024-07-18', to: '2024-07-31' })
           ),
           stateId: weightedRandom(weightedChoiceFuturOrders),
           customerId: customer.id,
@@ -98,17 +98,33 @@ export default class extends BaseSeeder {
     // loop on all customers and attach order in past to them
     for (const customer of customersFactory) {
       let numberOfOrders = Math.floor(Math.random() * 10) + 1
+      let nbOfNoShowOrder = 0
 
       for (let index = 0; index < numberOfOrders; index++) {
+        let stateChoosen = weightedRandom(weightedChoicesPastOrder)
+
         await OrderFactory.merge({
           pickupDate: DateTime.fromJSDate(
-            faker.date.between({ from: '2024-04-01', to: '2024-07-17' })
+            faker.date.between({ from: '2024-04-01', to: '2024-07-18' })
           ),
-          stateId: weightedRandom(weightedChoicesPastOrder),
+          stateId: stateChoosen,
           customerId: customer.id,
           userId: Math.floor(Math.random() * nbUsers) + 1,
         }).create()
+
+        if (stateChoosen === 4) nbOfNoShowOrder++
       }
+
+      const ratio = Number.parseInt(((nbOfNoShowOrder * 100) / numberOfOrders).toFixed(0))
+
+      const notation = () => {
+        if (ratio === 0) return 1
+        else if (ratio > 0 && ratio <= 10) return 2
+        else return 3
+      }
+
+      customer.notation = notation()
+      customer.save()
     }
   }
 }

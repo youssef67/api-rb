@@ -23,6 +23,9 @@ export default class Customer extends BaseModel {
   @column()
   declare email: string
 
+  @column()
+  declare notation: number
+
   @hasMany(() => Order)
   declare orders: HasMany<typeof Order>
 

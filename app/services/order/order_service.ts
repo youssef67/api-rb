@@ -104,6 +104,8 @@ class OrderService {
       .whereRaw('DATE(pickup_date) = ?', [today])
       .preload('customer')
 
+    console.log(orders)
+
     return orders
   }
 
