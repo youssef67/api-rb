@@ -5,14 +5,24 @@ export default class EmailOrder {
     email: string,
     amount: number,
     pickupDate: string,
-    details: string
+    details: string,
+    token: string,
+    orderId: number,
+    urlBase?: string
   ) {
-    await mail.send((message) => {
+    const confirmationUrl = `${urlBase}/confirmation?token=${token}&id=${encodeURIComponent(orderId)}`
+
+    mail.send((message) => {
       message
         .from('contact@rabbit_butcher.com')
         .to(email)
         .subject('Confirmation de commande')
-        .htmlView('emails/confirmation_order', { email, amount, pickupDate, details })
+        .htmlView('emails/confirmation_order', {
+          amount,
+          pickupDate,
+          details,
+          confirmationUrl,
+        })
     })
   }
 

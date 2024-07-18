@@ -3,6 +3,8 @@ import { UserFactory } from '#database/factories/user_factory'
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
 import { OrderFactory } from '#database/factories/order_factory'
 import States from '../../app/enums/states.js'
+import { DateTime } from 'luxon'
+import { faker } from '@faker-js/faker'
 
 export default class extends BaseSeeder {
   static environment: ['development']
@@ -59,23 +61,50 @@ export default class extends BaseSeeder {
       return choices[0][0]
     }
 
-    // define the weighted choices for the stateId field
-    const weightedChoices: WeightedChoice<States>[] = [
-      [States.CONFIRMED, 0.5], // 50% de probability
-      [States.RECOVERED, 0.3], // 30% de probability
-      [States.PENDING, 0.15], // 15% de probability
-      [States.CANCELLED, 0.05], // 5% de probability
+    // define the weighted choices for the stateId field for the futur orders
+    const weightedChoiceFuturOrders: WeightedChoice<States>[] = [
+      [States.CONFIRMED, 0.7], // 50% de probability
+      [States.PENDING, 0.3], // 15% de probability
+      [States.CANCELLED, 0.0], // 0% de probability
+      [States.RECOVERED, 0.0], // 0% de probability
+      [States.NOSWHOW, 0.0], // 0% de probability
     ]
 
-    // loop on all customers and attach order to them
+    // define the weighted choices for the stateId field for the futur orders
+    const weightedChoicesPastOrder: WeightedChoice<States>[] = [
+      [States.RECOVERED, 0.7], // 30% de probability
+      [States.CANCELLED, 0.15], // 15% de probability
+      [States.NOSWHOW, 0.15], // 5% de probability
+      [States.CONFIRMED, 0.0], // 0% de probability
+      [States.PENDING, 0.0], // 0% de probability
+    ]
+
+    // loop on all customers and attach order in futur to them
     for (const customer of customersFactory) {
       let numberOfOrders = Math.floor(Math.random() * 10) + 1
 
       for (let index = 0; index < numberOfOrders; index++) {
-        console.log(States.CONFIRMED)
-
         await OrderFactory.merge({
-          stateId: weightedRandom(weightedChoices),
+          pickupDate: DateTime.fromJSDate(
+            faker.date.between({ from: '2024-07-17', to: '2024-07-31' })
+          ),
+          stateId: weightedRandom(weightedChoiceFuturOrders),
+          customerId: customer.id,
+          userId: Math.floor(Math.random() * nbUsers) + 1,
+        }).create()
+      }
+    }
+
+    // loop on all customers and attach order in past to them
+    for (const customer of customersFactory) {
+      let numberOfOrders = Math.floor(Math.random() * 10) + 1
+
+      for (let index = 0; index < numberOfOrders; index++) {
+        await OrderFactory.merge({
+          pickupDate: DateTime.fromJSDate(
+            faker.date.between({ from: '2024-04-01', to: '2024-07-17' })
+          ),
+          stateId: weightedRandom(weightedChoicesPastOrder),
           customerId: customer.id,
           userId: Math.floor(Math.random() * nbUsers) + 1,
         }).create()

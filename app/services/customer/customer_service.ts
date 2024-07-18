@@ -23,17 +23,15 @@ class CustomerService {
         customer.name = rest.name
         customer.lastname = rest.lastname
         await customer.save()
+
+        const isCustomerLinked = await user
+          .related('customers')
+          .query()
+          .where('customer_id', customer.id)
+          .first()
+
+        if (!isCustomerLinked) await user.related('customers').attach([customer.id])
       }
-
-      const isCustomerLinked = await user
-        .related('customers')
-        .query()
-        .where('customer_id', customer.id)
-        .first()
-
-      console.log(isCustomerLinked)
-
-      if (!isCustomerLinked) await user.related('customers').attach([customer.id])
 
       return customer
     } catch (error) {

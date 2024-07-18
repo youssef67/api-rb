@@ -18,6 +18,10 @@ export default class extends BaseSeeder {
         status: 'recovered',
       },
       {
+        id: States.NOSWHOW,
+        status: 'noshwow',
+      },
+      {
         id: States.CANCELLED,
         status: 'cancelled',
       },

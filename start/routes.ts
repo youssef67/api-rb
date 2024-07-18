@@ -40,19 +40,19 @@ router
           .group(() => {
             router.post('add', [OrdersController, 'add'])
             router.post('update', [OrdersController, 'update'])
-            router.post('recovered', [OrdersController, 'recoveredOrder'])
-            router.post('canceled', [OrdersController, 'canceledOrder'])
+            router.post('updateStatus', [OrdersController, 'updateStatus'])
             router.get('day-orders', [OrdersController, 'getDayOrders'])
             router.get('all-orders', [OrdersController, 'getAllOrders'])
+            router.get('orders-history', [OrdersController, 'getHistoryOrders'])
           })
           .use(middleware.auth())
           .prefix('order')
 
+        router.post('confirmation', [OrdersController, 'orderConfirmation']).prefix('order')
         router
           .group(() => {
             router.get('all-customers', [CustomersController, 'getAllCustomers'])
             router.post('update', [CustomersController, 'update'])
-
           })
           .use(middleware.auth())
           .prefix('customer')

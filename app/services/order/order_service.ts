@@ -1,6 +1,9 @@
 import Order from '#models/order'
+import env from '#start/env'
 import { DateTime } from 'luxon'
 import EmailOrder from '#services/email/email_order'
+import { tokenUtils } from '../../utils/token_utils.js'
+import OrderToken from '#models/order_token'
 import type { ColumnsCustomer, UpdateRequest } from '#controllers/interfaces/order.interface'
 
 import Customer from '#models/customer'
@@ -32,7 +35,22 @@ class OrderService {
     })
 
     await order.save()
-    await EmailOrder.sendEmailForOrder(customer.email, amount, pickupDate, rest.detailsForCustomer)
+
+    const token = tokenUtils.generateToken()
+    const expiresAt = DateTime.now().plus({ days: 2 })
+
+    await OrderToken.create({ orderId: order.id, token: token, expiresAt: expiresAt })
+
+    await EmailOrder.sendEmailForOrder(
+      customer.email,
+      amount,
+      pickupDate,
+      rest.detailsForCustomer,
+      token,
+      order.id,
+      env.get('BASE_URL')
+    )
+
     return order
   }
 
@@ -57,17 +75,21 @@ class OrderService {
     return order
   }
 
-  async recoveredOrder(orderId: number): Promise<Order | null> {
+  async udapteStatus(orderId: number, action: string): Promise<Order | null> {
     const order = await Order.findOrFail(orderId)
-    order.stateId = 3
-    await order.save()
 
-    return order
-  }
+    switch (action) {
+      case 'recovered':
+        order.stateId = 3
+        break
+      case 'noShow':
+        order.stateId = 4
+        break
+      case 'canceled':
+        order.stateId = 5
+        break
+    }
 
-  async canceledOrder(orderId: number): Promise<Order | null> {
-    const order = await Order.findOrFail(orderId)
-    order.stateId = 4
     await order.save()
 
     return order
@@ -78,7 +100,7 @@ class OrderService {
 
     const orders = await Order.query()
       .where('user_id', '=', userId)
-      .whereNotIn('state_id', [3, 4])
+      .whereNotIn('state_id', [3, 4, 5])
       .whereRaw('DATE(pickup_date) = ?', [today])
       .preload('customer')
 
@@ -88,10 +110,39 @@ class OrderService {
   async getAllOrders(userId: number): Promise<Order[]> {
     const orders = await Order.query()
       .where('user_id', '=', userId)
-      .whereNotIn('state_id', [3, 4])
+      .whereNotIn('state_id', [3, 4, 5])
       .preload('customer')
 
     return orders
+  }
+
+  async getHistoryOrders(userId: number): Promise<Order[]> {
+    const orders = await Order.query()
+      .where('user_id', '=', userId)
+      .whereNotIn('state_id', [1, 2])
+      .preload('customer')
+
+    return orders
+  }
+
+  async orderConfirmation(token: string, orderId: string): Promise<boolean> {
+    const confirmationToken = await OrderToken.query()
+      .whereHas('order', (query) => {
+        query.where('id', orderId)
+      })
+      .andWhere('token', token)
+      .andWhere('expiresAt', '>', DateTime.now().toSQL())
+      .first()
+
+    if (!confirmationToken) {
+      return false
+    }
+
+    const order = await Order.findOrFail(confirmationToken.orderId)
+
+    order.stateId = 1
+    await order.save()
+    return true
   }
 }
 
