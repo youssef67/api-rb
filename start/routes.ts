@@ -53,6 +53,7 @@ router
           .group(() => {
             router.get('all-customers', [CustomersController, 'getAllCustomers'])
             router.post('update', [CustomersController, 'update'])
+            router.post('getNotation', [CustomersController, 'getNotationByEmail'])
           })
           .use(middleware.auth())
           .prefix('customer')

@@ -8,6 +8,11 @@ export interface CustomerRequest {
   phone: string
 }
 
+export interface NotationRequest {
+  str: string
+  userId: number
+}
+
 export interface Customer {
   id: number
   name: string

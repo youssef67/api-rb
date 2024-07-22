@@ -9,3 +9,10 @@ export const updateCustomerValidator = vine.compile(
     phone: vine.string().minLength(10).maxLength(15),
   })
 )
+
+export const NotationValidator = vine.compile(
+  vine.object({
+    str: vine.string().minLength(1).maxLength(255),
+    userId: vine.number().min(1),
+  })
+)

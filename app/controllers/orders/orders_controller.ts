@@ -1,9 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import { DateTime } from 'luxon'
 import type { OrderRequest, UpdateRequest } from '#controllers/interfaces/order.interface'
 import { addOrderValidator, OrderIdValidator, updateOrderValidator } from '#validators/order'
 import OrderService from '#services/order/order_service'
-import OrderToken from '#models/order_token'
 
 import CustomerService from '#services/customer/customer_service'
 

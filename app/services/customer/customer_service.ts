@@ -62,23 +62,25 @@ class CustomerService {
     for (const customer of customers) {
       const orders = await customer.related('orders').query()
 
-      let totalOrderAmount = 0
-      let nbOfNoShowOrder = 0
-      orders.forEach((order) => {
-        if (order.$original.stateId === States.NOSWHOW) {
-          nbOfNoShowOrder += 1
-        }
+      // let totalOrderAmount = 0
+      // let nbOfNoShowOrder = 0
+      // orders.forEach((order) => {
+      //   if (order.$original.stateId === States.NOSWHOW) {
+      //     nbOfNoShowOrder += 1
+      //   }
 
-        totalOrderAmount += Number(order.orderPrice)
-      })
+      //   totalOrderAmount += Number(order.orderPrice)
+      // })
 
-      const ratio = Number.parseInt(((nbOfNoShowOrder * 100) / orders.length).toFixed(0))
+      // const ratio = Number.parseInt(((nbOfNoShowOrder * 100) / orders.length).toFixed(0))
 
-      const notation = () => {
-        if (ratio === 0) return 1
-        else if (ratio > 0 && ratio <= 10) return 2
-        else return 3
-      }
+      // const notation = () => {
+      //   if (ratio === 0) return 1
+      //   else if (ratio > 0 && ratio <= 10) return 2
+      //   else return 3
+      // }
+
+      const customerOrders = await this.updateNotation(customer.id, false)
 
       const customerData: ResponseAllCustomers = {
         customer: customer,
@@ -86,14 +88,67 @@ class CustomerService {
         lastOrderDate: DateTime.fromISO(orders[orders.length - 1].pickupDate.toString())
           .setLocale('fr')
           .toFormat('dd LLLL yyyy'),
-        totalOrderAmount: totalOrderAmount.toFixed(2),
-        nbOfNoShowOrder: nbOfNoShowOrder,
-        notation: notation(),
+        totalOrderAmount: customerOrders.totalOrderAmount.toFixed(2),
+        nbOfNoShowOrder: customerOrders.nbOfNoShowOrder,
+        notation: customerOrders.notation,
       }
 
       result.push(customerData)
     }
     return result
+  }
+
+  async updateNotation(
+    customerId: number,
+    edit: boolean
+  ): Promise<{ notation: number; totalOrderAmount: number; nbOfNoShowOrder: number }> {
+    const customer = await Customer.findOrFail(customerId)
+    const orders = await customer.related('orders').query()
+
+    let totalOrderAmount = 0
+    let nbOfNoShowOrder = 0
+    orders.forEach((order) => {
+      if (order.$original.stateId === States.NOSWHOW) {
+        nbOfNoShowOrder += 1
+      }
+
+      totalOrderAmount += Number(order.orderPrice)
+    })
+
+    const ratio = Number.parseInt(((nbOfNoShowOrder * 100) / orders.length).toFixed(0))
+
+    let notation
+    if (ratio === 0) notation = 1
+    else if (ratio > 0 && ratio <= 10) notation = 2
+    else notation = 3
+
+    if (edit) {
+      customer.notation = notation
+      await customer.save()
+    }
+
+    return {
+      notation,
+      totalOrderAmount,
+      nbOfNoShowOrder,
+    }
+  }
+
+  async getNotation(str: string, userId: number): Promise<Customer | null> {
+    // const customer = await Customer.query().whereHas('users', (userQuery) => {
+    //   userQuery.where('id', userId).whereILike('email', `%${str}%`).first()
+    // })
+    const user = await User.findOrFail(userId)
+
+    // const toto = `%${str}%`
+
+    const customer = await user
+      .related('customers')
+      .query()
+      .where('email', 'LIKE', `%${str}%`)
+      .first()
+
+    return customer
   }
 }
 

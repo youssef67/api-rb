@@ -7,6 +7,8 @@ import OrderToken from '#models/order_token'
 import type { ColumnsCustomer, UpdateRequest } from '#controllers/interfaces/order.interface'
 
 import Customer from '#models/customer'
+import CustomerService from '#services/customer/customer_service'
+
 
 class OrderService {
   async add(
@@ -92,6 +94,9 @@ class OrderService {
 
     await order.save()
 
+    //Edit notation for customer
+    CustomerService.updateNotation(order.customerId, true)
+
     return order
   }
 
@@ -103,8 +108,6 @@ class OrderService {
       .whereNotIn('state_id', [3, 4, 5])
       .whereRaw('DATE(pickup_date) = ?', [today])
       .preload('customer')
-
-    console.log(orders)
 
     return orders
   }

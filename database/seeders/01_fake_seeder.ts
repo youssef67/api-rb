@@ -86,7 +86,7 @@ export default class extends BaseSeeder {
       for (let index = 0; index < numberOfOrders; index++) {
         await OrderFactory.merge({
           pickupDate: DateTime.fromJSDate(
-            faker.date.between({ from: '2024-07-18', to: '2024-07-31' })
+            faker.date.between({ from: '2024-07-22', to: '2024-07-31' })
           ),
           stateId: weightedRandom(weightedChoiceFuturOrders),
           customerId: customer.id,
@@ -105,7 +105,7 @@ export default class extends BaseSeeder {
 
         await OrderFactory.merge({
           pickupDate: DateTime.fromJSDate(
-            faker.date.between({ from: '2024-04-01', to: '2024-07-18' })
+            faker.date.between({ from: '2024-04-01', to: '2024-07-21' })
           ),
           stateId: stateChoosen,
           customerId: customer.id,
