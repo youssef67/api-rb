@@ -9,7 +9,6 @@ import type { ColumnsCustomer, UpdateRequest } from '#controllers/interfaces/ord
 import Customer from '#models/customer'
 import CustomerService from '#services/customer/customer_service'
 
-
 class OrderService {
   async add(
     amount: number,
@@ -98,6 +97,46 @@ class OrderService {
     CustomerService.updateNotation(order.customerId, true)
 
     return order
+  }
+
+  async updateStatusAll(orderIds: number[], action: string): Promise<boolean> {
+    const results = await Promise.allSettled(
+      orderIds.map(async (orderId) => {
+        try {
+          const order = await Order.findOrFail(orderId)
+
+          console.log(order)
+          switch (action) {
+            case 'recovered':
+              order.stateId = 3
+              break
+            case 'noShow':
+              order.stateId = 4
+              break
+            case 'canceled':
+              order.stateId = 5
+              break
+          }
+
+          await order.save()
+
+          // Edit notation for customer
+          await CustomerService.updateNotation(order.customerId, true)
+
+          return { status: 'fulfilled', orderId }
+        } catch (error) {
+          return { status: 'rejected', orderId, error }
+        }
+      })
+    )
+
+    const rejectedOrders = results.filter((result) => result.status === 'rejected')
+
+    if (rejectedOrders.length > 0) {
+      return false
+    }
+
+    return true
   }
 
   async getDayOrders(userId: number): Promise<Order[]> {

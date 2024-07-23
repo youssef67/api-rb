@@ -1,6 +1,11 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import type { OrderRequest, UpdateRequest } from '#controllers/interfaces/order.interface'
-import { addOrderValidator, OrderIdValidator, updateOrderValidator } from '#validators/order'
+import {
+  addOrderValidator,
+  OrderIdValidator,
+  updateOrderValidator,
+  OrderIdValidatorAll,
+} from '#validators/order'
 import OrderService from '#services/order/order_service'
 
 import CustomerService from '#services/customer/customer_service'
@@ -38,6 +43,15 @@ export default class OrdersController {
       await request.validateUsing(OrderIdValidator)
 
     const order = await OrderService.udapteStatus(payload.orderId, payload.action)
+
+    return response.status(200).json(order)
+  }
+
+  async updateStatusAll({ request, response }: HttpContext) {
+    const payload: { orderIds: number[]; action: string } =
+      await request.validateUsing(OrderIdValidatorAll)
+
+    const order = await OrderService.updateStatusAll(payload.orderIds, payload.action)
 
     return response.status(200).json(order)
   }

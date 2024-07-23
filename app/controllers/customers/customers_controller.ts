@@ -34,7 +34,5 @@ export default class CustomersController {
     if (customer !== null) {
       return response.status(200).json(customer)
     }
-    // const notation = await CustomerService.getNotation(request.qs().str)
-    // return response.status(200).json(notation)
   }
 }

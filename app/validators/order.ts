@@ -32,3 +32,10 @@ export const OrderIdValidator = vine.compile(
     action: vine.string().minLength(2).maxLength(255),
   })
 )
+
+export const OrderIdValidatorAll = vine.compile(
+  vine.object({
+    orderIds: vine.array(vine.number().min(1)),
+    action: vine.string().minLength(2).maxLength(255),
+  })
+)

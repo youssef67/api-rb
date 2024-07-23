@@ -41,9 +41,11 @@ router
             router.post('add', [OrdersController, 'add'])
             router.post('update', [OrdersController, 'update'])
             router.post('updateStatus', [OrdersController, 'updateStatus'])
+            router.post('updateStatusAll', [OrdersController, 'updateStatusAll'])
             router.get('day-orders', [OrdersController, 'getDayOrders'])
             router.get('all-orders', [OrdersController, 'getAllOrders'])
             router.get('orders-history', [OrdersController, 'getHistoryOrders'])
+
           })
           .use(middleware.auth())
           .prefix('order')
