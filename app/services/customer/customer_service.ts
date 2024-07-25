@@ -7,6 +7,8 @@ import {
   UpdateRequest,
 } from '#controllers/interfaces/customer.interface'
 import { DateTime } from 'luxon'
+import NotationService from '#services/notation/notation_service'
+
 import States from '../../enums/states.js'
 
 class CustomerService {
@@ -63,75 +65,22 @@ class CustomerService {
     for (const customer of customers) {
       const orders = await customer.related('orders').query()
 
-      const customerOrders = await this.updateNotation(customer.id, false)
+      const notation = await NotationService.getNotation(customer.email, user.id)
 
       const customerData: ResponseAllCustomers = {
         customer: customer,
-        ordersCount: customer.$extras.orders_count,
+        ordersCount: notation?.nbOrdersCompleted,
         lastOrderDate: DateTime.fromISO(orders[orders.length - 1].pickupDate.toString())
           .setLocale('fr')
           .toFormat('dd LLLL yyyy'),
-        totalOrderAmount: customerOrders.totalOrderAmount.toFixed(2),
-        nbOfNoShowOrder: customerOrders.nbOfNoShowOrder,
-        notation: customerOrders.notation,
+        totalOrderAmount: notation?.totalAmountOrdersCompleted,
+        nbOfNoShowOrder: notation?.nbNoShow,
+        notation: notation?.notation,
       }
 
       result.push(customerData)
     }
     return result
-  }
-
-  async updateNotation(
-    customerId: number,
-    userId: number,
-    state: number,
-    edit: boolean
-  ): Promise<boolean> {
-    const notation = await Notation.query()
-      .where('customer_id', customerId)
-      .andWhere('user_id', userId)
-      .first()
-
-    let notationUpdated = null
-
-    if (notation) {
-      let nbOrderUpdated = notation.nbOrdersCompleted + 1
-      let nbNoShowUpdated = notation.nbNoShow + 1
-
-      notation.nbOrdersCompleted = nbOrderUpdated
-      if (state === States.NOSWHOW) notation.nbNoShow = nbNoShowUpdated
-
-      const ratio = Number.parseInt(((nbNoShowUpdated * 100) / nbOrderUpdated).toFixed(0))
-
-      if (ratio === 0) notation.notation = 1
-      else if (ratio > 0 && ratio <= 10) notation.notation = 2
-      else notation.notation = 3
-
-      await notation.save()
-    }
-
-    return notationUpdated !== null
-  }
-
-  async getNotation(str: string, userId: number): Promise<Notation | null> {
-    const user = await User.findOrFail(userId)
-
-    const customer = await user
-      .related('customers')
-      .query()
-      .where('email', 'LIKE', `%${str}%`)
-      .first()
-
-    let notation = null
-
-    if (customer) {
-      notation = await Notation.query()
-        .where('customer_id', customer?.id)
-        .andWhere('user_id', userId)
-        .first()
-    }
-
-    return notation
   }
 }
 

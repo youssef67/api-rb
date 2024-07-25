@@ -19,6 +19,9 @@ export default class Notation extends BaseModel {
   declare nbNoShow: number
 
   @column()
+  declare totalAmountOrdersCompleted: number
+
+  @column()
   declare customerId: number
 
   @column()

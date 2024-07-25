@@ -16,6 +16,7 @@ export default class extends BaseSchema {
       table.integer('notation').notNullable().defaultTo(1)
       table.integer('nb_no_show').notNullable().defaultTo(0)
       table.integer('nb_orders_completed').notNullable().defaultTo(0)
+      table.float('total_amount_orders_completed', 10, 2).notNullable()
       table.timestamp('created_at')
       table.timestamp('updated_at')
     })

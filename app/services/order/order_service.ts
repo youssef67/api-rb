@@ -1,5 +1,4 @@
 import Order from '#models/order'
-import Notation from '#models/notation'
 import env from '#start/env'
 import { DateTime } from 'luxon'
 import EmailOrder from '#services/email/email_order'
@@ -8,7 +7,7 @@ import OrderToken from '#models/order_token'
 import type { ColumnsCustomer, UpdateRequest } from '#controllers/interfaces/order.interface'
 
 import Customer from '#models/customer'
-import CustomerService from '#services/customer/customer_service'
+import NotationService from '#services/notation/notation_service'
 
 class OrderService {
   async add(
@@ -95,7 +94,12 @@ class OrderService {
     await order.save()
 
     //Edit notation for customer
-    await CustomerService.updateNotation(order.customerId, order.userId, order.stateId, true)
+    await NotationService.updateNotation(
+      order.customerId,
+      order.userId,
+      order.stateId,
+      order.orderPrice
+    )
 
     return order
   }
@@ -121,7 +125,12 @@ class OrderService {
           await order.save()
 
           // Edit notation for customer
-          await CustomerService.updateNotation(order.customerId, order.userId, order.stateId, true)
+          await NotationService.updateNotation(
+            order.customerId,
+            order.userId,
+            order.stateId,
+            order.orderPrice
+          )
 
           return { status: 'fulfilled', orderId }
         } catch (error) {

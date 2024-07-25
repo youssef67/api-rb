@@ -25,11 +25,11 @@ export interface Customer {
 
 export interface ResponseAllCustomers {
   customer: Customer
-  ordersCount: number
+  ordersCount: number | undefined
   lastOrderDate: string
-  totalOrderAmount: string
-  nbOfNoShowOrder: number
-  notation: number
+  totalOrderAmount: number | undefined
+  nbOfNoShowOrder: number | undefined
+  notation: number | undefined
 }
 
 export interface UpdateRequest {

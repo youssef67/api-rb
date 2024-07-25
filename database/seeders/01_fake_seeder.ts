@@ -100,14 +100,15 @@ export default class extends BaseSeeder {
     // loop on all customers and attach order in past to them
     const getNotation = (ratio: number) => {
       if (ratio === 0) return 1
-      else if (ratio > 0 && ratio <= 10) return 2
+      else if (ratio > 0 && ratio <= 20) return 2
       else return 3
     }
 
     async function updateNotation(
       state: number,
       userId: number,
-      customerId: number
+      customerId: number,
+      price: number
     ): Promise<void> {
       let notation = await Notation.query()
         .where('user_id', userId)
@@ -120,12 +121,14 @@ export default class extends BaseSeeder {
         if (state === States.NOSWHOW) nbOfNoShowOrder = notation.nbNoShow + 1
 
         let nbOfOrder = notation.nbOrdersCompleted + 1
+        let totalAmount: number = notation.totalAmountOrdersCompleted + price
 
         const ratio = Number.parseInt(((nbOfNoShowOrder * 100) / nbOfOrder).toFixed(0))
 
         notation.notation = getNotation(ratio)
         notation.nbNoShow = nbOfNoShowOrder
         notation.nbOrdersCompleted = nbOfOrder
+        notation.totalAmountOrdersCompleted = totalAmount
 
         notation.save()
       }
@@ -136,6 +139,7 @@ export default class extends BaseSeeder {
             notation: 3,
             nbNoShow: 1,
             nbOrdersCompleted: 1,
+            totalAmountOrdersCompleted: price,
             customerId: customerId,
             userId: userId,
           }).create()
@@ -144,6 +148,7 @@ export default class extends BaseSeeder {
             notation: 1,
             nbNoShow: 0,
             nbOrdersCompleted: 1,
+            totalAmountOrdersCompleted: price,
             customerId: customerId,
             userId: userId,
           }).create()
@@ -159,17 +164,19 @@ export default class extends BaseSeeder {
       for (let index = 0; index < numberOfOrders; index++) {
         const stateChoosen = weightedRandom(weightedChoicesPastOrder)
         const userIdChoosen = Math.floor(Math.random() * nbUsers) + 1
+        const randomPrice = faker.number.float({ min: 10, max: 200, multipleOf: 0.02 })
 
         await OrderFactory.merge({
           pickupDate: DateTime.fromJSDate(
             faker.date.between({ from: '2024-04-01', to: '2024-07-24' })
           ),
+          orderPrice: randomPrice,
           stateId: stateChoosen,
           customerId: customerId,
           userId: userIdChoosen,
         }).create()
 
-        await updateNotation(stateChoosen, userIdChoosen, customerId)
+        await updateNotation(stateChoosen, userIdChoosen, customerId, randomPrice)
       }
     }
   }

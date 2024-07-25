@@ -7,7 +7,7 @@ import { UserFactory } from './user_factory.js'
 export const OrderFactory = factory
   .define(Order, async ({ faker }) => {
     return {
-      orderPrice: faker.number.float({ min: 10, max: 200 }),
+      orderPrice: faker.number.float({ min: 10, max: 200, multipleOf: 0.02 }),
       pickupDate: DateTime.fromJSDate(faker.date.between({ from: '2024-06-26', to: '2024-07-31' })),
       pickupTime: faker.helpers.arrayElement([
         '12:00:00',
