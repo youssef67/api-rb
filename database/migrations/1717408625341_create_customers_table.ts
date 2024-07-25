@@ -10,7 +10,6 @@ export default class extends BaseSchema {
       table.string('name', 100).notNullable()
       table.string('lastname').notNullable()
       table.string('phone', 20).notNullable()
-      table.string('notation').notNullable().defaultTo(1)
       table.timestamp('created_at')
       table.timestamp('updated_at')
     })

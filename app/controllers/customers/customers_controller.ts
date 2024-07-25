@@ -29,10 +29,10 @@ export default class CustomersController {
   async getNotationByEmail({ request, response }: HttpContext) {
     const payload: NotationRequest = await request.validateUsing(NotationValidator)
 
-    const customer = await CustomerService.getNotation(payload.str, payload.userId)
+    const notation = await CustomerService.getNotation(payload.str, payload.userId)
 
-    if (customer !== null) {
-      return response.status(200).json(customer)
+    if (notation !== null) {
+      return response.status(200).json(notation)
     }
   }
 }

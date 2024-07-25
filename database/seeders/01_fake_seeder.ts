@@ -1,7 +1,9 @@
 import { CustomerFactory } from '#database/factories/customer_factory'
 import { UserFactory } from '#database/factories/user_factory'
+import Notation from '#models/notation'
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
 import { OrderFactory } from '#database/factories/order_factory'
+import { NotationFactory } from '#database/factories/notation_factory'
 import States from '../../app/enums/states.js'
 import { DateTime } from 'luxon'
 import { faker } from '@faker-js/faker'
@@ -86,7 +88,7 @@ export default class extends BaseSeeder {
       for (let index = 0; index < numberOfOrders; index++) {
         await OrderFactory.merge({
           pickupDate: DateTime.fromJSDate(
-            faker.date.between({ from: '2024-07-23', to: '2024-07-31' })
+            faker.date.between({ from: '2024-07-25', to: '2024-07-31' })
           ),
           stateId: weightedRandom(weightedChoiceFuturOrders),
           customerId: customer.id,
@@ -96,35 +98,79 @@ export default class extends BaseSeeder {
     }
 
     // loop on all customers and attach order in past to them
+    const getNotation = (ratio: number) => {
+      if (ratio === 0) return 1
+      else if (ratio > 0 && ratio <= 10) return 2
+      else return 3
+    }
+
+    async function updateNotation(
+      state: number,
+      userId: number,
+      customerId: number
+    ): Promise<void> {
+      let notation = await Notation.query()
+        .where('user_id', userId)
+        .where('customer_id', customerId)
+        .first()
+
+      if (notation) {
+        let nbOfNoShowOrder = notation.nbNoShow
+
+        if (state === States.NOSWHOW) nbOfNoShowOrder = notation.nbNoShow + 1
+
+        let nbOfOrder = notation.nbOrdersCompleted + 1
+
+        const ratio = Number.parseInt(((nbOfNoShowOrder * 100) / nbOfOrder).toFixed(0))
+
+        notation.notation = getNotation(ratio)
+        notation.nbNoShow = nbOfNoShowOrder
+        notation.nbOrdersCompleted = nbOfOrder
+
+        notation.save()
+      }
+
+      if (!notation) {
+        if (state === States.NOSWHOW) {
+          await NotationFactory.merge({
+            notation: 3,
+            nbNoShow: 1,
+            nbOrdersCompleted: 1,
+            customerId: customerId,
+            userId: userId,
+          }).create()
+        } else {
+          await NotationFactory.merge({
+            notation: 1,
+            nbNoShow: 0,
+            nbOrdersCompleted: 1,
+            customerId: customerId,
+            userId: userId,
+          }).create()
+        }
+      }
+    }
+
     for (const customer of customersFactory) {
-      let numberOfOrders = Math.floor(Math.random() * 10) + 1
-      let nbOfNoShowOrder = 0
+      // define the number of orders for the current customer
+      let numberOfOrders = Math.floor(Math.random() * 30) + 1
+      let customerId = customer.id
 
       for (let index = 0; index < numberOfOrders; index++) {
-        let stateChoosen = weightedRandom(weightedChoicesPastOrder)
+        const stateChoosen = weightedRandom(weightedChoicesPastOrder)
+        const userIdChoosen = Math.floor(Math.random() * nbUsers) + 1
 
         await OrderFactory.merge({
           pickupDate: DateTime.fromJSDate(
-            faker.date.between({ from: '2024-04-01', to: '2024-07-22' })
+            faker.date.between({ from: '2024-04-01', to: '2024-07-24' })
           ),
           stateId: stateChoosen,
-          customerId: customer.id,
-          userId: Math.floor(Math.random() * nbUsers) + 1,
+          customerId: customerId,
+          userId: userIdChoosen,
         }).create()
 
-        if (stateChoosen === 4) nbOfNoShowOrder++
+        await updateNotation(stateChoosen, userIdChoosen, customerId)
       }
-
-      const ratio = Number.parseInt(((nbOfNoShowOrder * 100) / numberOfOrders).toFixed(0))
-
-      const notation = () => {
-        if (ratio === 0) return 1
-        else if (ratio > 0 && ratio <= 10) return 2
-        else return 3
-      }
-
-      customer.notation = notation()
-      customer.save()
     }
   }
 }

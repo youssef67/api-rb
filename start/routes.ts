@@ -45,7 +45,6 @@ router
             router.get('day-orders', [OrdersController, 'getDayOrders'])
             router.get('all-orders', [OrdersController, 'getAllOrders'])
             router.get('orders-history', [OrdersController, 'getHistoryOrders'])
-
           })
           .use(middleware.auth())
           .prefix('order')

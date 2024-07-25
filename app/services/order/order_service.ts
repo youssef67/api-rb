@@ -1,4 +1,5 @@
 import Order from '#models/order'
+import Notation from '#models/notation'
 import env from '#start/env'
 import { DateTime } from 'luxon'
 import EmailOrder from '#services/email/email_order'
@@ -94,7 +95,7 @@ class OrderService {
     await order.save()
 
     //Edit notation for customer
-    CustomerService.updateNotation(order.customerId, true)
+    await CustomerService.updateNotation(order.customerId, order.userId, order.stateId, true)
 
     return order
   }
@@ -105,7 +106,6 @@ class OrderService {
         try {
           const order = await Order.findOrFail(orderId)
 
-          console.log(order)
           switch (action) {
             case 'recovered':
               order.stateId = 3
@@ -121,7 +121,7 @@ class OrderService {
           await order.save()
 
           // Edit notation for customer
-          await CustomerService.updateNotation(order.customerId, true)
+          await CustomerService.updateNotation(order.customerId, order.userId, order.stateId, true)
 
           return { status: 'fulfilled', orderId }
         } catch (error) {
@@ -146,7 +146,11 @@ class OrderService {
       .where('user_id', '=', userId)
       .whereNotIn('state_id', [3, 4, 5])
       .whereRaw('DATE(pickup_date) = ?', [today])
-      .preload('customer')
+      .preload('customer', (customerQuery) => {
+        customerQuery.preload('notations', (notationQuery) => {
+          notationQuery.where('user_id', '=', userId)
+        })
+      })
 
     return orders
   }
@@ -155,7 +159,11 @@ class OrderService {
     const orders = await Order.query()
       .where('user_id', '=', userId)
       .whereNotIn('state_id', [3, 4, 5])
-      .preload('customer')
+      .preload('customer', (customerQuery) => {
+        customerQuery.preload('notations', (notationQuery) => {
+          notationQuery.where('user_id', '=', userId)
+        })
+      })
 
     return orders
   }
@@ -164,7 +172,11 @@ class OrderService {
     const orders = await Order.query()
       .where('user_id', '=', userId)
       .whereNotIn('state_id', [1, 2])
-      .preload('customer')
+      .preload('customer', (customerQuery) => {
+        customerQuery.preload('notations', (notationQuery) => {
+          notationQuery.where('user_id', '=', userId)
+        })
+      })
 
     return orders
   }

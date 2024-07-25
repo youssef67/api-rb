@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import Order from './order.js'
 import User from './user.js'
+import Notation from './notation.js'
 
 import { BaseModel, column, hasMany, manyToMany } from '@adonisjs/lucid/orm'
 import type { HasMany, ManyToMany } from '@adonisjs/lucid/types/relations'
@@ -23,11 +24,11 @@ export default class Customer extends BaseModel {
   @column()
   declare email: string
 
-  @column()
-  declare notation: number
-
   @hasMany(() => Order)
   declare orders: HasMany<typeof Order>
+
+  @hasMany(() => Notation)
+  declare notations: HasMany<typeof Notation>
 
   @manyToMany(() => User)
   declare users: ManyToMany<typeof User>
