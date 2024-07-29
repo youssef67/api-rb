@@ -17,7 +17,7 @@ export default class OrdersController {
 
       const { amount, pickupDate, pickupTime, ...rest } = payload
 
-      const customer = await CustomerService.checkIfCustomerExists(rest)
+      const customer = await CustomerService.checkIfCustomerExists(rest, amount)
 
       const order = await OrderService.add(amount, pickupDate, pickupTime, customer, rest)
 

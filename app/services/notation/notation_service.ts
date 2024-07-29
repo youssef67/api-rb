@@ -39,17 +39,23 @@ class NotationService {
       await notation.save()
       return notation
     } else {
-      return await this.createNotation(customerId, userId, state, price)
+      return await this.createNotation(customerId, userId, state, price, true)
     }
   }
 
-  async createNotation(customerId: number, userId: number, state: number, price: number) {
+  async createNotation(
+    customerId: number,
+    userId: number,
+    state: number,
+    price: number,
+    isUpdate: boolean
+  ) {
     const newNotation = new Notation()
     newNotation.customerId = customerId
     newNotation.userId = userId
     newNotation.nbNoShow = state === States.NOSWHOW ? 1 : 0
-    newNotation.nbOrdersCompleted = 1
-    newNotation.notation = state === States.NOSWHOW ? 3 : 0
+    newNotation.nbOrdersCompleted = isUpdate ? 1 : 0
+    newNotation.notation = state === States.NOSWHOW ? 3 : 1
     newNotation.totalAmountOrdersCompleted = price
 
     await newNotation.save()

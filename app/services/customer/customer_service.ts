@@ -1,6 +1,5 @@
 import Customer from '#models/customer'
 import User from '#models/user'
-import Notation from '#models/notation'
 import {
   CustomerRequest,
   ResponseAllCustomers,
@@ -9,10 +8,8 @@ import {
 import { DateTime } from 'luxon'
 import NotationService from '#services/notation/notation_service'
 
-import States from '../../enums/states.js'
-
 class CustomerService {
-  async checkIfCustomerExists(payload: CustomerRequest) {
+  async checkIfCustomerExists(payload: CustomerRequest, amount: number) {
     try {
       const { userId, ...rest } = payload
 
@@ -35,6 +32,8 @@ class CustomerService {
           .first()
 
         if (!isCustomerLinked) await user.related('customers').attach([customer.id])
+
+        NotationService.createNotation(customer.id, user.id, 1, amount, false)
       }
 
       return customer
